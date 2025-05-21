@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>사진 공지 요약</title>
+  <title>가정통신문 요약 서비스</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
       --primary-color: #4361ee;
       --primary-hover: #3a56d4;
-      --bg-color: #f8f9fa;
       --text-color: #333;
-      --border-color: #e0e0e0;
-      --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-      --success-color: #4CAF50;
-      --success-hover: #45a049;
-      --radius: 8px;
+      --bg-color: #f8f9fa;
+      --card-bg: #ffffff;
+      --border-radius: 12px;
+      --shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s ease;
     }
 
     * {
@@ -24,13 +24,12 @@
     }
 
     body {
-      font-family: 'Segoe UI', 'Noto Sans KR', sans-serif;
+      font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
       background-color: var(--bg-color);
       color: var(--text-color);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
       min-height: 100vh;
       padding: 40px 20px;
       line-height: 1.6;
@@ -38,210 +37,265 @@
 
     .container {
       width: 100%;
-      max-width: 850px;
+      max-width: 800px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      gap: 32px;
     }
 
     .header {
       text-align: center;
-      margin-bottom: 40px;
-      width: 100%;
-    }
-
-    h2 {
-      font-size: 28px;
-      font-weight: 600;
-      color: #2d3748;
-      margin-bottom: 16px;
-    }
-
-    .description {
-      font-size: 16px;
-      color: #4a5568;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .card {
-      background-color: white;
-      border-radius: var(--radius);
-      box-shadow: var(--box-shadow);
-      width: 100%;
-      overflow: hidden;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-    }
-
-    .card-header {
-      background-color: var(--primary-color);
-      color: white;
-      padding: 20px;
-      font-size: 18px;
-      font-weight: 600;
-      text-align: center;
-    }
-
-    .card-body {
-      padding: 30px;
-    }
-
-    form {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .file-input-container {
-      position: relative;
-      margin-bottom: 25px;
-      width: 100%;
-    }
-
-    .file-input-label {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      padding: 40px 0;
-      background-color: #f7fafc;
-      border: 2px dashed #cbd5e0;
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .file-input-label:hover {
-      background-color: #edf2f7;
-      border-color: var(--primary-color);
-    }
-
-    .file-input-label span {
-      display: block;
-      margin-top: 10px;
-      color: #4a5568;
-    }
-
-    input[type="file"] {
-      position: absolute;
-      width: 0.1px;
-      height: 0.1px;
-      opacity: 0;
-      overflow: hidden;
-      z-index: -1;
-    }
-
-    .upload-icon {
-      font-size: 48px;
-      color: #a0aec0;
       margin-bottom: 10px;
     }
 
-    .file-name {
-      margin-top: 5px;
-      font-size: 14px;
-      color: #718096;
+    .header h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: var(--primary-color);
+      font-weight: 700;
     }
 
-    button {
-      padding: 12px 24px;
+    .header p {
+      color: #666;
       font-size: 16px;
-      font-weight: 600;
-      background-color: var(--success-color);
-      color: white;
-      border: none;
-      border-radius: var(--radius);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      display: inline-flex;
+    }
+
+    .upload-card {
+      background-color: var(--card-bg);
+      width: 100%;
+      padding: 36px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      text-align: center;
+    }
+
+    .upload-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .file-upload {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      width: 100%;
+      height: 180px;
+      border: 2px dashed #ddd;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      width: 100%;
-      max-width: 200px;
-    }
-
-    button:hover {
-      background-color: var(--success-hover);
-      transform: translateY(-2px);
-    }
-
-    button:active {
-      transform: translateY(0);
-    }
-
-    button:disabled {
-      background-color: #a0aec0;
-      cursor: not-allowed;
-    }
-
-    .result-container {
-      margin-top: 40px;
-      width: 100%;
-    }
-
-    .result-header {
-      margin-bottom: 15px;
-      font-size: 20px;
-      font-weight: 600;
-      color: #2d3748;
-    }
-
-    .result-card {
-      background-color: white;
-      border-radius: var(--radius);
-      box-shadow: var(--box-shadow);
-      padding: 5px;
-      width: 100%;
+      cursor: pointer;
+      transition: var(--transition);
       overflow: hidden;
     }
 
-    #result {
-      background-color: #ffffff;
-      border: 1px solid var(--border-color);
-      padding: 25px;
-      border-radius: var(--radius);
+    .file-input-wrapper:hover {
+      border-color: var(--primary-color);
+      background-color: rgba(67, 97, 238, 0.05);
+    }
+
+    .file-input-wrapper i {
+      font-size: 48px;
+      color: #ccc;
+      margin-bottom: 15px;
+      transition: var(--transition);
+    }
+
+    .file-input-wrapper:hover i {
+      color: var(--primary-color);
+    }
+
+    .file-input-wrapper span {
+      color: #888;
+      font-size: 16px;
+    }
+
+    .file-input-wrapper input[type="file"] {
+      position: absolute;
+      left: 0;
+      top: 0;
       width: 100%;
-      min-height: 200px;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .preview-container {
+      display: none;
+      position: relative;
+      width: 100%;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+
+    .preview-image {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .preview-remove {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .file-name {
+      font-size: 14px;
+      color: #666;
+      margin-top: 8px;
+      max-width: 300px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .upload-btn {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      font-size: 16px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .upload-btn:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+    }
+
+    .upload-btn:disabled {
+      background-color: #b0b0b0;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .spinner {
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .result-card {
+      background-color: var(--card-bg);
+      width: 100%;
+      padding: 30px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+    }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 10px;
+    }
+
+    .result-header h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .result-content {
+      background-color: rgba(67, 97, 238, 0.05);
+      border-radius: 8px;
+      padding: 20px;
       white-space: pre-wrap;
       word-wrap: break-word;
       font-size: 16px;
-      line-height: 1.7;
-      color: #2d3748;
+      line-height: 1.6;
+      max-height: 400px;
       overflow-y: auto;
-      transition: all 0.3s ease;
+      border-left: 4px solid var(--primary-color);
     }
 
-    .processing {
-      color: #718096;
+    .result-placeholder {
+      color: #888;
       font-style: italic;
     }
 
-    .error {
-      color: #e53e3e;
+    .result-success {
+      color: #333;
     }
 
-    /* 반응형 */
+    .result-error {
+      color: #ff4d4d;
+    }
+
+    .copy-btn {
+      background-color: transparent;
+      border: none;
+      color: var(--primary-color);
+      cursor: pointer;
+      font-size: 20px;
+      padding: 5px;
+      margin-left: auto;
+      transition: var(--transition);
+    }
+
+    .copy-btn:hover {
+      color: var(--primary-hover);
+      transform: scale(1.1);
+    }
+
+    footer {
+      margin-top: 30px;
+      color: #888;
+      font-size: 14px;
+      text-align: center;
+    }
+
     @media (max-width: 768px) {
-      .card-body {
-        padding: 20px;
+      .upload-card, .result-card {
+        padding: 25px;
       }
       
-      h2 {
+      .header h1 {
         font-size: 24px;
       }
       
-      .result-header {
-        font-size: 18px;
-      }
-      
-      #result {
-        padding: 20px;
-        font-size: 15px;
+      .file-input-wrapper {
+        height: 150px;
       }
     }
   </style>
@@ -249,70 +303,202 @@
 <body>
   <div class="container">
     <div class="header">
-      <h2>사진 공지 요약 서비스</h2>
-      <p class="description">사진을 업로드하면 내용을 자동으로 요약하고 베트남어로 번역해 드립니다</p>
+      <h1>가정통신문 요약 서비스</h1>
+      <p>사진을 업로드하면 한글 요약과 베트남어 번역을 보여줍니다</p>
     </div>
-    
-    <div class="card">
-      <div class="card-header">
-        이미지 업로드
-      </div>
-      <div class="card-body">
-        <form id="uploadForm">
-          <div class="file-input-container">
-            <label for="imageFile" class="file-input-label">
-              <div class="upload-icon">📁</div>
-              <span>클릭하여 이미지 선택하기</span>
-              <div id="fileName" class="file-name"></div>
-            </label>
-            <input type="file" id="imageFile" name="image" accept="image/*" required />
-          </div>
-          <button type="submit" id="uploadButton">분석하기</button>
-        </form>
-      </div>
+
+    <div class="upload-card">
+      <form id="uploadForm" class="file-upload">
+        <div class="file-input-wrapper" id="dropArea">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <span>사진을 드래그하거나 클릭하여 선택하세요</span>
+          <input type="file" id="fileInput" name="image" accept="image/*" required />
+        </div>
+        
+        <div class="preview-container" id="previewContainer">
+          <img class="preview-image" id="previewImage" src="" alt="미리보기">
+          <button type="button" class="preview-remove" id="removePreview">
+            <i class="fas fa-times"></i>
+          </button>
+          <div class="file-name" id="fileName"></div>
+        </div>
+        
+        <button id="uploadButton" type="submit" class="upload-btn">
+          <span>요약 시작하기</span>
+          <div class="spinner" id="spinner"></div>
+        </button>
+      </form>
     </div>
-    
-    <div class="result-container">
-      <div class="result-header">결과</div>
-      <div class="result-card">
-        <pre id="result">아직 결과가 없습니다. 위 폼에서 이미지를 업로드해 주세요.</pre>
+
+    <div class="result-card">
+      <div class="result-header">
+        <h3>결과</h3>
+        <button id="copyButton" class="copy-btn" title="결과 복사">
+          <i class="far fa-copy"></i>
+        </button>
+      </div>
+      <div class="result-content" id="result">
+        <span class="result-placeholder">아직 결과가 없습니다. 사진을 업로드해 주세요.</span>
       </div>
     </div>
   </div>
 
+  <footer>
+    © 2025 가정통신문 요약 서비스
+  </footer>
+
   <script>
     const form = document.getElementById("uploadForm");
+    const fileInput = document.getElementById("fileInput");
     const resultEl = document.getElementById("result");
-    const fileInput = document.getElementById("imageFile");
-    const fileName = document.getElementById("fileName");
     const uploadButton = document.getElementById("uploadButton");
+    const spinner = document.getElementById("spinner");
+    const dropArea = document.getElementById("dropArea");
+    const previewContainer = document.getElementById("previewContainer");
+    const previewImage = document.getElementById("previewImage");
+    const removePreview = document.getElementById("removePreview");
+    const fileName = document.getElementById("fileName");
+    const copyButton = document.getElementById("copyButton");
 
-    // 파일 선택 시 파일명 표시
-    fileInput.addEventListener("change", (e) => {
-      if (e.target.files.length > 0) {
-        fileName.textContent = e.target.files[0].name;
-      } else {
-        fileName.textContent = "";
+    // 파일 드래그 앤 드롭 기능
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropArea.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight() {
+      dropArea.style.borderColor = "#4361ee";
+      dropArea.style.backgroundColor = "rgba(67, 97, 238, 0.05)";
+    }
+
+    function unhighlight() {
+      dropArea.style.borderColor = "#ddd";
+      dropArea.style.backgroundColor = "";
+    }
+
+    dropArea.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      
+      if (files.length) {
+        fileInput.files = files;
+        updateFilePreview(files[0]);
       }
+    }
+
+    // 파일 선택 시 미리보기
+    fileInput.addEventListener('change', function() {
+      if (this.files.length) {
+        updateFilePreview(this.files[0]);
+      }
+    });
+
+    function updateFilePreview(file) {
+      if (!file.type.match('image.*')) {
+        alert('이미지 파일만 업로드 가능합니다.');
+        return;
+      }
+
+      const reader = new FileReader();
+      
+      reader.onload = function(e) {
+        previewImage.src = e.target.result;
+        fileName.textContent = file.name;
+        previewContainer.style.display = 'block';
+        dropArea.style.display = 'none';
+      }
+      
+      reader.readAsDataURL(file);
+    }
+
+    // 미리보기 제거
+    removePreview.addEventListener('click', function() {
+      previewContainer.style.display = 'none';
+      dropArea.style.display = 'flex';
+      fileInput.value = '';
+    });
+
+    async function resizeImage(file, maxSize = 1200) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+          img.src = e.target.result;
+        };
+
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const scale = Math.min(maxSize / img.width, maxSize / img.height, 1);
+          canvas.width = img.width * scale;
+          canvas.height = img.height * scale;
+
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          canvas.toBlob((blob) => {
+            const resizedFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", {
+              type: "image/jpeg",
+              lastModified: Date.now(),
+            });
+            resolve(resizedFile);
+          }, "image/jpeg", 0.85);
+        };
+
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // 결과 복사 기능
+    copyButton.addEventListener('click', function() {
+      const text = resultEl.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const originalIcon = copyButton.innerHTML;
+        copyButton.innerHTML = '<i class="fas fa-check" style="color: #4CAF50;"></i>';
+        
+        setTimeout(() => {
+          copyButton.innerHTML = originalIcon;
+        }, 2000);
+      }).catch(err => {
+        console.error('클립보드 복사 실패:', err);
+      });
     });
 
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
-      
+
       if (!fileInput.files.length) {
-        resultEl.textContent = "이미지를 선택해 주세요.";
+        resultEl.innerHTML = '<span class="result-error">이미지를 선택해 주세요.</span>';
         return;
       }
-      
-      resultEl.textContent = "처리 중입니다...";
-      resultEl.className = "processing";
-      uploadButton.disabled = true;
 
-      const formData = new FormData(form);
+      resultEl.innerHTML = '<span class="result-placeholder">처리 중입니다. 약 30초 가량 소요될 수 있습니다...</span>';
+      uploadButton.disabled = true;
+      spinner.style.display = 'inline-block';
 
       try {
+        const originalFile = fileInput.files[0];
+        const resizedFile = await resizeImage(originalFile);
+
+        const formData = new FormData();
+        formData.append("image", resizedFile);
+
         const res = await fetch(
-          "https://primary-production-628d.up.railway.app/webhook-test/bebd1982-06c0-4488-9086-1466e40e471b",
+          "https://primary-production-628d.up.railway.app/webhook/bebd1982-06c0-4488-9086-1466e40e471b",
           {
             method: "POST",
             body: formData,
@@ -324,14 +510,14 @@
         }
 
         const data = await res.json();
-        resultEl.className = "";
-        resultEl.textContent = data[0].message.content || "결과 없음";
+        const content = data[0]?.message?.content || "결과 없음";
+        resultEl.innerHTML = `<span class="result-success">${content}</span>`;
 
       } catch (error) {
-        resultEl.className = "error";
-        resultEl.textContent = "⚠️ 오류 발생: " + error.message;
+        resultEl.innerHTML = `<span class="result-error">⚠️ 오류 발생: ${error.message}</span>`;
       } finally {
         uploadButton.disabled = false;
+        spinner.style.display = 'none';
       }
     });
   </script>
