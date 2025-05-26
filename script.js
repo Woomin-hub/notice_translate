@@ -1,15 +1,4 @@
-// auth.js에서 getCurrentUser 함수를 전역으로 사용할 수 있도록 설정
-window.getCurrentUser = null;
-
-// auth.js가 로드되면 getCurrentUser 함수를 설정
-document.addEventListener('DOMContentLoaded', () => {
-  // auth.js 모듈이 로드될 때까지 잠시 기다림
-  setTimeout(() => {
-    if (typeof getCurrentUser !== 'undefined') {
-      window.getCurrentUser = getCurrentUser;
-    }
-  }, 100);
-});
+import { getCurrentUser } from './auth.js';
 
 const form = document.getElementById("uploadForm");
 const fileInput = document.getElementById("fileInput");
@@ -56,7 +45,7 @@ dropArea.addEventListener('drop', handleDrop, false);
 function handleDrop(e) {
   const dt = e.dataTransfer;
   const files = dt.files;
-  
+
   if (files.length) {
     fileInput.files = files;
     updateFilePreview(files[0]);
@@ -64,7 +53,7 @@ function handleDrop(e) {
 }
 
 // 파일 선택 시 미리보기
-fileInput.addEventListener('change', function() {
+fileInput.addEventListener('change', function () {
   if (this.files.length) {
     updateFilePreview(this.files[0]);
   }
@@ -77,19 +66,19 @@ function updateFilePreview(file) {
   }
 
   const reader = new FileReader();
-  
-  reader.onload = function(e) {
+
+  reader.onload = function (e) {
     previewImage.src = e.target.result;
     fileName.textContent = file.name;
     previewContainer.style.display = 'block';
     dropArea.style.display = 'none';
-  }
-  
+  };
+
   reader.readAsDataURL(file);
 }
 
 // 미리보기 제거
-removePreview.addEventListener('click', function() {
+removePreview.addEventListener('click', function () {
   previewContainer.style.display = 'none';
   dropArea.style.display = 'flex';
   fileInput.value = '';
@@ -127,12 +116,12 @@ async function resizeImage(file, maxSize = 1200) {
 }
 
 // 결과 복사 기능
-copyButton.addEventListener('click', function() {
+copyButton.addEventListener('click', function () {
   const text = resultEl.textContent;
   navigator.clipboard.writeText(text).then(() => {
     const originalIcon = copyButton.innerHTML;
     copyButton.innerHTML = '<i class="fas fa-check" style="color: #4CAF50;"></i>';
-    
+
     setTimeout(() => {
       copyButton.innerHTML = originalIcon;
     }, 2000);
@@ -145,7 +134,7 @@ form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   // 로그인 상태 확인
-  const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
+  const currentUser = getCurrentUser();
   if (!currentUser) {
     resultEl.innerHTML = '<span class="result-error">로그인이 필요합니다.</span>';
     return;
