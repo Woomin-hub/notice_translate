@@ -16,6 +16,7 @@ const authEmail = document.getElementById('authEmail')
 const authPassword = document.getElementById('authPassword')
 const closeModal = document.getElementById('closeModal')
 const uploadCard = document.querySelector('.upload-card')
+const signupBtn = document.getElementById('signupBtn')
 
 let isLoginMode = true
 
@@ -151,6 +152,10 @@ function showMessage(message, type) {
 loginBtn?.addEventListener('click', openAuthModal)
 logoutBtn?.addEventListener('click', signOut)
 closeModal?.addEventListener('click', closeAuthModal)
+signupBtn?.addEventListener('click', () => {
+  openAuthModal()
+  setAuthMode(false) // 회원가입 모드로 열기
+})
 
 // 모달 배경 클릭시 닫기
 authModal?.addEventListener('click', (e) => {
