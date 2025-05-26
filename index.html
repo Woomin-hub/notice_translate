@@ -12,6 +12,22 @@
     <div class="header">
       <h1>가정통신문 요약 서비스</h1>
       <p>사진을 업로드하면 한글 요약과 베트남어 번역을 보여줍니다</p>
+      
+      <!-- 인증 상태 표시 -->
+      <div class="auth-status">
+        <button id="loginBtn" class="auth-btn">
+          <i class="fas fa-sign-in-alt"></i>
+          로그인
+        </button>
+        
+        <div id="userInfo" class="user-info" style="display: none;">
+          <span id="userEmail"></span>
+          <button id="logoutBtn" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            로그아웃
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="upload-card">
@@ -54,6 +70,39 @@
     © 2025 가정통신문 요약 서비스
   </footer>
 
+  <!-- 인증 모달 -->
+  <div id="authModal" class="auth-modal">
+    <div class="auth-modal-content">
+      <div class="auth-modal-header">
+        <h2 id="authTitle">로그인</h2>
+        <button id="closeModal" class="close-modal">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      
+      <form id="authForm" class="auth-form">
+        <div class="form-group">
+          <label for="authEmail">이메일</label>
+          <input type="email" id="authEmail" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="authPassword">비밀번호</label>
+          <input type="password" id="authPassword" required>
+        </div>
+        
+        <button type="submit" id="authSubmitBtn" class="auth-submit-btn">
+          로그인
+        </button>
+      </form>
+      
+      <p id="switchAuthMode" class="auth-switch">
+        계정이 없으신가요? <span class="auth-link">회원가입</span>
+      </p>
+    </div>
+  </div>
+
+  <script type="module" src="auth.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

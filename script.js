@@ -1,3 +1,16 @@
+// auth.js에서 getCurrentUser 함수를 전역으로 사용할 수 있도록 설정
+window.getCurrentUser = null;
+
+// auth.js가 로드되면 getCurrentUser 함수를 설정
+document.addEventListener('DOMContentLoaded', () => {
+  // auth.js 모듈이 로드될 때까지 잠시 기다림
+  setTimeout(() => {
+    if (typeof getCurrentUser !== 'undefined') {
+      window.getCurrentUser = getCurrentUser;
+    }
+  }, 100);
+});
+
 const form = document.getElementById("uploadForm");
 const fileInput = document.getElementById("fileInput");
 const resultEl = document.getElementById("result");
@@ -130,6 +143,13 @@ copyButton.addEventListener('click', function() {
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
+
+  // 로그인 상태 확인
+  const currentUser = window.getCurrentUser ? window.getCurrentUser() : null;
+  if (!currentUser) {
+    resultEl.innerHTML = '<span class="result-error">로그인이 필요합니다.</span>';
+    return;
+  }
 
   if (!fileInput.files.length) {
     resultEl.innerHTML = '<span class="result-error">이미지를 선택해 주세요.</span>';
