@@ -283,6 +283,7 @@ footer {
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 12px;
 }
 
 .auth-btn {
@@ -514,4 +515,50 @@ footer {
     gap: 10px;
     text-align: center;
   }
+}
+
+
+/* 정보 섹션 추가 스타일 */
+.info-section {
+  background-color: var(--card-bg);
+  width: 100%;
+  padding: 30px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  margin-top: 20px;
+}
+
+.info-section h2 {
+  font-size: 22px;
+  color: var(--primary-color);
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.info-section p,
+.info-section li,
+.info-section ol {
+  font-size: 16px;
+  color: #444;
+}
+
+.info-section ol {
+  padding-left: 20px;
+  margin-bottom: 10px;
+}
+
+.info-section ul {
+  padding-left: 20px;
+  list-style: disc;
+  margin-bottom: 10px;
+}
+
+.info-section blockquote {
+  background-color: rgba(67, 97, 238, 0.05);
+  border-left: 4px solid var(--primary-color);
+  padding: 12px 20px;
+  margin: 10px 0;
+  font-style: italic;
+  color: #555;
+  border-radius: 6px;
 }
