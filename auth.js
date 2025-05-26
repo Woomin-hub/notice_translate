@@ -108,14 +108,12 @@ async function signUp(email, password) {
       email,
       password
     })
-    
+
     if (error) throw error
-    
-    if (data.user) {
-      showMessage('회원가입이 완료되었습니다!', 'success')
-      setAuthMode(true) // 로그인 모드로 변경
-    }
-    
+
+    showMessage('회원가입 완료! 이메일을 확인해 주세요.', 'success')
+    setAuthMode(true) // 로그인 모드로 전환
+
   } catch (error) {
     showMessage(`회원가입 실패: ${error.message}`, 'error')
   }
@@ -193,10 +191,32 @@ authForm?.addEventListener('submit', async (e) => {
 })
 
 // Supabase 인증 상태 변경 감지
-supabase.auth.onAuthStateChange((event, session) => {
+supabase.auth.onAuthStateChange(async (event, session) => {
   if (event === 'SIGNED_IN') {
     currentUser = session.user
     showUserLoggedIn(session.user)
+
+    // ✅ 로그인한 유저의 profile이 이미 존재하는지 확인
+    const { data: existingProfile, error } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('id', session.user.id)
+      .single()
+
+    // ✅ 존재하지 않으면 profile을 생성
+    if (!existingProfile && !error) {
+      const { error: insertError } = await supabase.from('profiles').insert({
+        id: session.user.id,
+        role: 'free' // 기본 역할 설정
+      })
+
+      if (insertError) {
+        console.error('프로필 삽입 실패:', insertError.message)
+      } else {
+        console.log('✅ 프로필 생성 완료')
+      }
+    }
+
   } else if (event === 'SIGNED_OUT') {
     currentUser = null
     showUserLoggedOut()
