@@ -1,3 +1,5 @@
+console.log("[auth.js loaded ✅]");
+
 import { supabase } from './supabase-client.js'
 
 // DOM 요소들
