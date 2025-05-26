@@ -19,21 +19,7 @@ const uploadCard = document.querySelector('.upload-card')
 const signupBtn = document.getElementById('signupBtn')
 
 let isLoginMode = true
-
-// 현재 사용자 상태
 let currentUser = null
-
-// 초기 인증 상태 확인
-async function initAuth() {
-  const { data: { user } } = await supabase.auth.getUser()
-  
-  if (user) {
-    currentUser = user
-    showUserLoggedIn(user)
-  } else {
-    showUserLoggedOut()
-  }
-}
 
 // 로그인 상태 UI
 function showUserLoggedIn(user) {
@@ -43,6 +29,9 @@ function showUserLoggedIn(user) {
   userEmail.textContent = user.email
   uploadCard.style.opacity = '1'
   uploadCard.style.pointerEvents = 'auto'
+
+  // ✅ 로그인 시점에 로그아웃 버튼 이벤트 연결
+  document.getElementById('logoutBtn')?.addEventListener('click', signOut)
 }
 
 // 로그아웃 상태 UI
@@ -54,10 +43,21 @@ function showUserLoggedOut() {
   uploadCard.style.pointerEvents = 'none'
 }
 
+// 초기 인증 상태 확인
+async function initAuth() {
+  const { data: { user } } = await supabase.auth.getUser()
+  if (user) {
+    currentUser = user
+    showUserLoggedIn(user)
+  } else {
+    showUserLoggedOut()
+  }
+}
+
 // 모달 열기
 function openAuthModal() {
   authModal.style.display = 'flex'
-  setAuthMode(true) // 기본은 로그인 모드
+  setAuthMode(true)
 }
 
 // 모달 닫기
@@ -66,10 +66,9 @@ function closeAuthModal() {
   authForm.reset()
 }
 
-// 인증 모드 변경 (로그인/회원가입)
+// 인증 모드 설정
 function setAuthMode(loginMode) {
   isLoginMode = loginMode
-  
   if (isLoginMode) {
     authTitle.textContent = '로그인'
     authSubmitBtn.textContent = '로그인'
@@ -84,18 +83,12 @@ function setAuthMode(loginMode) {
 // 로그인
 async function signIn(email, password) {
   try {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    })
-    
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
     if (error) throw error
-    
     currentUser = data.user
     showUserLoggedIn(data.user)
     closeAuthModal()
     showMessage('로그인되었습니다!', 'success')
-    
   } catch (error) {
     showMessage(`로그인 실패: ${error.message}`, 'error')
   }
@@ -104,16 +97,10 @@ async function signIn(email, password) {
 // 회원가입
 async function signUp(email, password) {
   try {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password
-    })
-
+    const { data, error } = await supabase.auth.signUp({ email, password })
     if (error) throw error
-
     showMessage('회원가입 완료! 이메일을 확인해 주세요.', 'success')
-    setAuthMode(true) // 로그인 모드로 전환
-
+    setAuthMode(true)
   } catch (error) {
     showMessage(`회원가입 실패: ${error.message}`, 'error')
   }
@@ -123,40 +110,62 @@ async function signUp(email, password) {
 async function signOut() {
   try {
     const { error } = await supabase.auth.signOut()
-    
     if (error) throw error
-    
     currentUser = null
     showUserLoggedOut()
     showMessage('로그아웃되었습니다.', 'success')
-    
   } catch (error) {
     showMessage(`로그아웃 실패: ${error.message}`, 'error')
   }
 }
 
-// 메시지 표시
+// 메시지
 function showMessage(message, type) {
   const messageEl = document.createElement('div')
   messageEl.className = `message message-${type}`
   messageEl.textContent = message
-  
   document.body.appendChild(messageEl)
-  
-  setTimeout(() => {
-    messageEl.remove()
-  }, 3000)
+  setTimeout(() => messageEl.remove(), 3000)
 }
 
-// DOMContentLoaded 안으로 옮겨서 모든 요소가 렌더링된 이후 실행되게 처리
+// 로그인 상태 변화 감지
+supabase.auth.onAuthStateChange(async (event, session) => {
+  if (event === 'SIGNED_IN') {
+    currentUser = session.user
+    showUserLoggedIn(session.user)
+
+    const { data: existingProfile, error } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('id', session.user.id)
+      .single()
+
+    if (!existingProfile && !error) {
+      const { error: insertError } = await supabase.from('profiles').insert({
+        id: session.user.id,
+        role: 'free'
+      })
+
+      if (insertError) {
+        console.error('프로필 삽입 실패:', insertError.message)
+      } else {
+        console.log('✅ 프로필 생성 완료')
+      }
+    }
+  } else if (event === 'SIGNED_OUT') {
+    currentUser = null
+    showUserLoggedOut()
+  }
+})
+
+// DOM 완전히 로드된 후 이벤트 연결
 document.addEventListener('DOMContentLoaded', () => {
   loginBtn?.addEventListener('click', openAuthModal)
-  logoutBtn?.addEventListener('click', signOut)
-  closeModal?.addEventListener('click', closeAuthModal)
   signupBtn?.addEventListener('click', () => {
     openAuthModal()
     setAuthMode(false)
   })
+  closeModal?.addEventListener('click', closeAuthModal)
 
   authModal?.addEventListener('click', (e) => {
     if (e.target === authModal) closeAuthModal()
@@ -176,7 +185,6 @@ document.addEventListener('DOMContentLoaded', () => {
       showMessage('이메일과 비밀번호를 입력해주세요.', 'error')
       return
     }
-
     if (isLoginMode) {
       await signIn(email, password)
     } else {
@@ -187,42 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initAuth()
 })
 
-
-// Supabase 인증 상태 변경 감지
-supabase.auth.onAuthStateChange(async (event, session) => {
-  if (event === 'SIGNED_IN') {
-    currentUser = session.user
-    showUserLoggedIn(session.user)
-
-    // ✅ 로그인한 유저의 profile이 이미 존재하는지 확인
-    const { data: existingProfile, error } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('id', session.user.id)
-      .single()
-
-    // ✅ 존재하지 않으면 profile을 생성
-    if (!existingProfile && !error) {
-      const { error: insertError } = await supabase.from('profiles').insert({
-        id: session.user.id,
-        role: 'free' // 기본 역할 설정
-      })
-
-      if (insertError) {
-        console.error('프로필 삽입 실패:', insertError.message)
-      } else {
-        console.log('✅ 프로필 생성 완료')
-      }
-    }
-
-  } else if (event === 'SIGNED_OUT') {
-    currentUser = null
-    showUserLoggedOut()
-  }
-})
-
-
-// 현재 사용자 반환 함수 (다른 파일에서 사용 가능)
+// 외부에서 현재 사용자 조회 가능
 export function getCurrentUser() {
   return currentUser
 }
