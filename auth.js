@@ -38,6 +38,7 @@ async function initAuth() {
 // 로그인 상태 UI
 function showUserLoggedIn(user) {
   loginBtn.style.display = 'none'
+  signupBtn.style.display = 'none'
   userInfo.style.display = 'flex'
   userEmail.textContent = user.email
   uploadCard.style.opacity = '1'
@@ -47,6 +48,7 @@ function showUserLoggedIn(user) {
 // 로그아웃 상태 UI
 function showUserLoggedOut() {
   loginBtn.style.display = 'flex'
+  signupBtn.style.display = 'flex'
   userInfo.style.display = 'none'
   uploadCard.style.opacity = '0.5'
   uploadCard.style.pointerEvents = 'none'
