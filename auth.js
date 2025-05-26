@@ -148,47 +148,45 @@ function showMessage(message, type) {
   }, 3000)
 }
 
-// 이벤트 리스너들
-loginBtn?.addEventListener('click', openAuthModal)
-logoutBtn?.addEventListener('click', signOut)
-closeModal?.addEventListener('click', closeAuthModal)
-signupBtn?.addEventListener('click', () => {
-  openAuthModal()
-  setAuthMode(false) // 회원가입 모드로 열기
+// DOMContentLoaded 안으로 옮겨서 모든 요소가 렌더링된 이후 실행되게 처리
+document.addEventListener('DOMContentLoaded', () => {
+  loginBtn?.addEventListener('click', openAuthModal)
+  logoutBtn?.addEventListener('click', signOut)
+  closeModal?.addEventListener('click', closeAuthModal)
+  signupBtn?.addEventListener('click', () => {
+    openAuthModal()
+    setAuthMode(false)
+  })
+
+  authModal?.addEventListener('click', (e) => {
+    if (e.target === authModal) closeAuthModal()
+  })
+
+  switchAuthMode?.addEventListener('click', (e) => {
+    if (e.target.classList.contains('auth-link')) {
+      setAuthMode(!isLoginMode)
+    }
+  })
+
+  authForm?.addEventListener('submit', async (e) => {
+    e.preventDefault()
+    const email = authEmail.value.trim()
+    const password = authPassword.value
+    if (!email || !password) {
+      showMessage('이메일과 비밀번호를 입력해주세요.', 'error')
+      return
+    }
+
+    if (isLoginMode) {
+      await signIn(email, password)
+    } else {
+      await signUp(email, password)
+    }
+  })
+
+  initAuth()
 })
 
-// 모달 배경 클릭시 닫기
-authModal?.addEventListener('click', (e) => {
-  if (e.target === authModal) {
-    closeAuthModal()
-  }
-})
-
-// 인증 모드 변경
-switchAuthMode?.addEventListener('click', (e) => {
-  if (e.target.classList.contains('auth-link')) {
-    setAuthMode(!isLoginMode)
-  }
-})
-
-// 폼 제출
-authForm?.addEventListener('submit', async (e) => {
-  e.preventDefault()
-  
-  const email = authEmail.value.trim()
-  const password = authPassword.value
-  
-  if (!email || !password) {
-    showMessage('이메일과 비밀번호를 입력해주세요.', 'error')
-    return
-  }
-  
-  if (isLoginMode) {
-    await signIn(email, password)
-  } else {
-    await signUp(email, password)
-  }
-})
 
 // Supabase 인증 상태 변경 감지
 supabase.auth.onAuthStateChange(async (event, session) => {
@@ -223,8 +221,6 @@ supabase.auth.onAuthStateChange(async (event, session) => {
   }
 })
 
-// 초기화
-initAuth()
 
 // 현재 사용자 반환 함수 (다른 파일에서 사용 가능)
 export function getCurrentUser() {
