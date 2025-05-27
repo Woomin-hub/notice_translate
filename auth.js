@@ -197,6 +197,18 @@ document.addEventListener('DOMContentLoaded', () => {
   initAuth()
 })
 
+// Facebook 로그인
+export async function signInWithFacebook() {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'facebook',
+  });
+
+  if (error) {
+    showMessage(`Facebook 로그인 실패: ${error.message}`, 'error');
+  }
+}
+
+
 // 외부에서 현재 사용자 조회 가능
 export function getCurrentUser() {
   return currentUser

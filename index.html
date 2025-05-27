@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>가정통신문 요약 서비스</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./styles.css?v=20240527">
 </head>
 <body>
   <div class="container">
@@ -26,6 +26,10 @@
         <button id="signupBtn" class="auth-btn">
           <i class="fas fa-user-plus"></i>
           회원가입
+        </button>
+
+        <button onclick="signInWithFacebook()" class="auth-btn fb-login-btn">
+          <i class="fab fa-facebook"></i> Facebook으로 로그인
         </button>
 
         <div id="userInfo" class="user-info" style="display: none;">
@@ -150,7 +154,7 @@
     </div>
   </div>
 
-  <script type="module" src="auth.js"></script>
-  <script type="module" src="script.js"></script>
+  <script type="module" src="auth.js?v=20240527"></script>
+  <script type="module" src="script.js?v=20240527"></script>
 </body>
 </html>
