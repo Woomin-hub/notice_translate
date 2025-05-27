@@ -1,3 +1,5 @@
+// ✅ [auth.js] - Supabase 기반 이메일/페이스북 로그인 및 프로필 자동 생성 처리
+
 console.log("[auth.js loaded ✅]");
 
 import { supabase } from './supabase-client.js'
@@ -17,6 +19,7 @@ const authPassword = document.getElementById('authPassword')
 const closeModal = document.getElementById('closeModal')
 const uploadCard = document.querySelector('.upload-card')
 const signupBtn = document.getElementById('signupBtn')
+const facebookLoginBtn = document.getElementById('facebookLoginBtn')
 
 let isLoginMode = true
 let currentUser = null
@@ -29,9 +32,7 @@ function showUserLoggedIn(user) {
   userEmail.textContent = user.email
   uploadCard.style.opacity = '1'
   uploadCard.style.pointerEvents = 'auto'
-
-  // ✅ 로그인 시점에 로그아웃 버튼 이벤트 연결
-  document.getElementById('logoutBtn')?.addEventListener('click', signOut)
+  logoutBtn?.addEventListener('click', signOut)
 }
 
 // 로그아웃 상태 UI
@@ -54,19 +55,16 @@ async function initAuth() {
   }
 }
 
-// 모달 열기
 function openAuthModal() {
   authModal.style.display = 'flex'
   setAuthMode(true)
 }
 
-// 모달 닫기
 function closeAuthModal() {
   authModal.style.display = 'none'
   authForm.reset()
 }
 
-// 인증 모드 설정
 function setAuthMode(loginMode) {
   isLoginMode = loginMode
   if (isLoginMode) {
@@ -80,7 +78,6 @@ function setAuthMode(loginMode) {
   }
 }
 
-// 로그인
 async function signIn(email, password) {
   try {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
@@ -94,7 +91,6 @@ async function signIn(email, password) {
   }
 }
 
-// 회원가입
 async function signUp(email, password) {
   try {
     const { data, error } = await supabase.auth.signUp({ email, password })
@@ -106,7 +102,6 @@ async function signUp(email, password) {
   }
 }
 
-// 로그아웃
 async function signOut() {
   try {
     const { error } = await supabase.auth.signOut()
@@ -119,7 +114,6 @@ async function signOut() {
   }
 }
 
-// 메시지
 function showMessage(message, type) {
   const messageEl = document.createElement('div')
   messageEl.className = `message message-${type}`
@@ -128,7 +122,14 @@ function showMessage(message, type) {
   setTimeout(() => messageEl.remove(), 3000)
 }
 
-// 로그인 상태 변화 감지
+// Facebook 로그인
+async function signInWithFacebook() {
+  const { error } = await supabase.auth.signInWithOAuth({ provider: 'facebook' });
+  if (error) {
+    showMessage(`Facebook 로그인 실패: ${error.message}`, 'error');
+  }
+}
+
 supabase.auth.onAuthStateChange(async (event, session) => {
   if (event === 'SIGNED_IN') {
     currentUser = session.user
@@ -145,7 +146,6 @@ supabase.auth.onAuthStateChange(async (event, session) => {
         id: session.user.id,
         role: 'free'
       })
-
       if (insertError) {
         console.error('프로필 삽입 실패:', insertError.message)
       } else {
@@ -158,7 +158,6 @@ supabase.auth.onAuthStateChange(async (event, session) => {
   }
 })
 
-// DOM 완전히 로드된 후 이벤트 연결
 document.addEventListener('DOMContentLoaded', () => {
   loginBtn?.addEventListener('click', openAuthModal)
   signupBtn?.addEventListener('click', () => {
@@ -166,8 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setAuthMode(false)
   })
   closeModal?.addEventListener('click', closeAuthModal)
-
-  logoutBtn?.addEventListener('click', signOut) // ✅ 새로고침 후를 대비한 안전장치
+  logoutBtn?.addEventListener('click', signOut)
 
   authModal?.addEventListener('click', (e) => {
     if (e.target === authModal) closeAuthModal()
@@ -178,6 +176,8 @@ document.addEventListener('DOMContentLoaded', () => {
       setAuthMode(!isLoginMode)
     }
   })
+
+  facebookLoginBtn?.addEventListener('click', signInWithFacebook)
 
   authForm?.addEventListener('submit', async (e) => {
     e.preventDefault()
@@ -197,19 +197,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initAuth()
 })
 
-// Facebook 로그인
-export async function signInWithFacebook() {
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: 'facebook',
-  });
-
-  if (error) {
-    showMessage(`Facebook 로그인 실패: ${error.message}`, 'error');
-  }
-}
-
-
-// 외부에서 현재 사용자 조회 가능
 export function getCurrentUser() {
   return currentUser
 }
+
+export { signInWithFacebook }
