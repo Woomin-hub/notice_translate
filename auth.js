@@ -167,6 +167,8 @@ document.addEventListener('DOMContentLoaded', () => {
   })
   closeModal?.addEventListener('click', closeAuthModal)
 
+  logoutBtn?.addEventListener('click', signOut) // ✅ 새로고침 후를 대비한 안전장치
+
   authModal?.addEventListener('click', (e) => {
     if (e.target === authModal) closeAuthModal()
   })
