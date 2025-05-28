@@ -1,10 +1,9 @@
 // ✅ [auth_v1.js] - Supabase 기반 로그인/회원가입/로그아웃/페이스북 로그인 최적화 (Postgres 트리거 기반)
+import { supabase } from './supabase-client.js';
 
 if (!window.__authLoaded) {
   window.__authLoaded = true;
   console.log("[auth.js loaded ✅]");
-
-  import { supabase } from './supabase-client.js';
 
   const authModal = document.getElementById('authModal');
   const loginBtn = document.getElementById('loginBtn');
