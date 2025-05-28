@@ -107,48 +107,28 @@ async function signUp(email, password) {
 }
 
 async function signOut() {
-  console.log('🚪 signOut 함수 시작')
-  
-  // Supabase 객체 상태 확인
-  console.log('🔍 supabase 존재:', !!supabase)
-  if (supabase) {
-    console.log('🔍 supabase.auth 존재:', !!supabase.auth)
-    console.log('🔍 supabase.auth.signOut 존재:', typeof supabase.auth.signOut)
-  }
-  
+  console.log('🚪 signOut 함수 시작');
+
   try {
-    console.log('⏳ supabase.auth.signOut() 호출 중...')
-    
-    const result = await supabase.auth.signOut()
-    
-    console.log('📋 signOut 결과 전체:', result)
-    console.log('❌ 에러 여부:', result.error)
-    
-    if (result.error) {
-      console.error('❌ Supabase signOut 에러:', result.error)
-      throw result.error
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    console.log('🪪 현재 세션 상태:', sessionData);
+
+    if (sessionError) {
+      console.warn('세션 정보 조회 중 오류 발생:', sessionError.message);
     }
-    
-    console.log('✅ Supabase signOut 성공')
-    console.log('🔄 currentUser 업데이트 중...')
-    currentUser = null
-    
-    console.log('🔄 UI 업데이트 중...')
-    showUserLoggedOut()
-    
-    console.log('💬 성공 메시지 표시 중...')
-    showMessage('로그아웃되었습니다.', 'success')
-    
-    console.log('✅ signOut 완료!')
-    
+
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      throw error;
+    }
+
+    currentUser = null;
+    showUserLoggedOut();
+    showMessage('로그아웃되었습니다.', 'success');
   } catch (error) {
-    console.error('💥 signOut 예외 발생!')
-    console.error('💥 에러 타입:', typeof error)
-    console.error('💥 에러 객체:', error)
-    console.error('💥 에러 메시지:', error?.message)
-    console.error('💥 에러 스택:', error?.stack)
-    
-    showMessage(`로그아웃 실패: ${error.message}`, 'error')
+    console.error('🚨 로그아웃 실패:', error.message);
+    showMessage(`로그아웃 실패: ${error.message}`, 'error');
   }
 }
 
