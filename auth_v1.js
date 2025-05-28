@@ -32,7 +32,6 @@ function showUserLoggedIn(user) {
   userEmail.textContent = user.email
   uploadCard.style.opacity = '1'
   uploadCard.style.pointerEvents = 'auto'
-  logoutBtn?.addEventListener('click', signOut)
 }
 
 // 로그아웃 상태 UI
