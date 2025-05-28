@@ -4,6 +4,11 @@ console.log("[auth.js loaded ✅]");
 
 import { supabase } from './supabase-client.js'
 
+console.log('🔍 Supabase import 후 상태:')
+console.log('- supabase 객체:', supabase)
+console.log('- supabase.auth:', supabase?.auth)
+console.log('- supabase.auth.signOut:', typeof supabase?.auth?.signOut)
+
 // DOM 요소들
 const authModal = document.getElementById('authModal')
 const loginBtn = document.getElementById('loginBtn')
@@ -102,13 +107,47 @@ async function signUp(email, password) {
 }
 
 async function signOut() {
+  console.log('🚪 signOut 함수 시작')
+  
+  // Supabase 객체 상태 확인
+  console.log('🔍 supabase 존재:', !!supabase)
+  if (supabase) {
+    console.log('🔍 supabase.auth 존재:', !!supabase.auth)
+    console.log('🔍 supabase.auth.signOut 존재:', typeof supabase.auth.signOut)
+  }
+  
   try {
-    const { error } = await supabase.auth.signOut()
-    if (error) throw error
+    console.log('⏳ supabase.auth.signOut() 호출 중...')
+    
+    const result = await supabase.auth.signOut()
+    
+    console.log('📋 signOut 결과 전체:', result)
+    console.log('❌ 에러 여부:', result.error)
+    
+    if (result.error) {
+      console.error('❌ Supabase signOut 에러:', result.error)
+      throw result.error
+    }
+    
+    console.log('✅ Supabase signOut 성공')
+    console.log('🔄 currentUser 업데이트 중...')
     currentUser = null
+    
+    console.log('🔄 UI 업데이트 중...')
     showUserLoggedOut()
+    
+    console.log('💬 성공 메시지 표시 중...')
     showMessage('로그아웃되었습니다.', 'success')
+    
+    console.log('✅ signOut 완료!')
+    
   } catch (error) {
+    console.error('💥 signOut 예외 발생!')
+    console.error('💥 에러 타입:', typeof error)
+    console.error('💥 에러 객체:', error)
+    console.error('💥 에러 메시지:', error?.message)
+    console.error('💥 에러 스택:', error?.stack)
+    
     showMessage(`로그아웃 실패: ${error.message}`, 'error')
   }
 }
@@ -165,25 +204,23 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log('- logoutBtn:', !!logoutBtn)
   console.log('- authModal:', !!authModal)
   console.log('- authForm:', !!authForm)
-
   loginBtn?.addEventListener('click', openAuthModal)
   signupBtn?.addEventListener('click', () => {
     openAuthModal()
     setAuthMode(false)
   })
   closeModal?.addEventListener('click', closeAuthModal)
-  
-  // 로그아웃 버튼 이벤트 리스너 - 디버깅 추가
-  if (logoutBtn) {
-    console.log('✅ 로그아웃 버튼에 이벤트 리스너 등록 중...')
-    logoutBtn.addEventListener('click', (e) => {
-      console.log('🚪 로그아웃 버튼 클릭됨!')
-      signOut()
-    })
-  } else {
-    console.log('❌ 로그아웃 버튼을 찾을 수 없음')
-  }
-  
+  logoutBtn?.addEventListener('click', signOut)
+
+  authModal?.addEventListener('click', (e) => {
+    if (e.target === authModal) closeAuthModal()
+  })
+
+  switchAuthMode?.addEventListener('click', (e) => {
+    if (e.target.classList.contains('auth-link')) {
+      setAuthMode(!isLoginMode)
+    }
+  })
 
   facebookLoginBtn?.addEventListener('click', signInWithFacebook)
 
