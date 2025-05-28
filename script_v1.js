@@ -1,4 +1,4 @@
-import { getCurrentUser } from './auth.js';
+import { getCurrentUser } from './auth_v1.js';
 
 const form = document.getElementById("uploadForm");
 const fileInput = document.getElementById("fileInput");
