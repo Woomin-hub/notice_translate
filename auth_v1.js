@@ -158,23 +158,32 @@ supabase.auth.onAuthStateChange(async (event, session) => {
 })
 
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('🚀 DOMContentLoaded 이벤트 실행됨')
+  console.log('🔘 DOM 요소들 확인:')
+  console.log('- loginBtn:', !!loginBtn)
+  console.log('- signupBtn:', !!signupBtn)
+  console.log('- logoutBtn:', !!logoutBtn)
+  console.log('- authModal:', !!authModal)
+  console.log('- authForm:', !!authForm)
+
   loginBtn?.addEventListener('click', openAuthModal)
   signupBtn?.addEventListener('click', () => {
     openAuthModal()
     setAuthMode(false)
   })
   closeModal?.addEventListener('click', closeAuthModal)
-  logoutBtn?.addEventListener('click', signOut)
-
-  authModal?.addEventListener('click', (e) => {
-    if (e.target === authModal) closeAuthModal()
-  })
-
-  switchAuthMode?.addEventListener('click', (e) => {
-    if (e.target.classList.contains('auth-link')) {
-      setAuthMode(!isLoginMode)
-    }
-  })
+  
+  // 로그아웃 버튼 이벤트 리스너 - 디버깅 추가
+  if (logoutBtn) {
+    console.log('✅ 로그아웃 버튼에 이벤트 리스너 등록 중...')
+    logoutBtn.addEventListener('click', (e) => {
+      console.log('🚪 로그아웃 버튼 클릭됨!')
+      signOut()
+    })
+  } else {
+    console.log('❌ 로그아웃 버튼을 찾을 수 없음')
+  }
+  
 
   facebookLoginBtn?.addEventListener('click', signInWithFacebook)
 
