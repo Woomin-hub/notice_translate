@@ -88,7 +88,7 @@ async function signUp(email, password) {
   try {
     const { data, error } = await supabase.auth.signUp({ email, password });
     if (error) throw error;
-    showMessage('회원가입 완료! 이메일을 확인해 주세요.', 'success');
+    showMessage('이메일을 발송했습니다. 이메일을 인증하면 회원가입이 완료됩니다.', 'success');
     setAuthMode(true);
   } catch (error) {
     showMessage(`회원가입 실패: ${error.message}`, 'error');
@@ -128,7 +128,7 @@ function showMessage(message, type) {
   messageEl.className = `message message-${type}`;
   messageEl.textContent = message;
   document.body.appendChild(messageEl);
-  setTimeout(() => messageEl.remove(), 3000);
+  setTimeout(() => messageEl.remove(), 5000);
 }
 
 async function signInWithFacebook() {
