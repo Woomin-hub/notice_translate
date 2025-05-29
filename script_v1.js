@@ -1,4 +1,6 @@
 import { getCurrentUser } from './auth_v1.js';
+import { checkQuotaAndUse } from './checkQuotaAndUse.js';
+import { supabase } from './supabase-client.js';
 
 const form = document.getElementById("uploadForm");
 const fileInput = document.getElementById("fileInput");
@@ -135,6 +137,7 @@ form.addEventListener("submit", async (e) => {
 
   // 로그인 상태 확인
   const currentUser = getCurrentUser();
+  console.log("✅ 현재 로그인된 user_id:", currentUser.id); // ✅ 추가
   if (!currentUser) {
     resultEl.innerHTML = '<span class="result-error">로그인이 필요합니다.</span>';
     return;
@@ -150,6 +153,17 @@ form.addEventListener("submit", async (e) => {
   spinner.style.display = 'inline-block';
 
   try {
+    // ✅ Step 1: 사용량 확인
+    const quotaStatus = await checkQuotaAndUse(currentUser.id);
+
+    if (!quotaStatus.allowed) {
+      resultEl.innerHTML = `<span class="result-error">⚠️ 이번 달 사용량을 모두 소진했습니다.</span>`;
+      uploadButton.disabled = false;
+      spinner.style.display = 'none';
+      return;
+    }
+
+    // ✅ Step 2: 이미지 리사이즈 후 n8n 요청
     const originalFile = fileInput.files[0];
     const resizedFile = await resizeImage(originalFile);
 
@@ -170,8 +184,14 @@ form.addEventListener("submit", async (e) => {
 
     const data = await res.json();
     const content = data[0]?.message?.content || "결과 없음";
-    resultEl.innerHTML = `<span class="result-success">${content}</span>`;
 
+    // ✅ Step 3: 사용 로그 기록
+    await supabase.from('usage_logs').insert({
+      user_id: currentUser.id,
+      usage_amount: 1
+    });
+
+    resultEl.innerHTML = `<span class="result-success">${content}<br>잔여: ${quotaStatus.remaining - 1}회</span>`;
   } catch (error) {
     resultEl.innerHTML = `<span class="result-error">⚠️ 오류 발생: ${error.message}</span>`;
   } finally {
